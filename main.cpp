@@ -120,6 +120,8 @@ class Deck {
 
 class Game {
     private:
+        int roundCounter = 0;
+
         bool isRunning() {
             if (!((hand1.empty() && board1.empty() && wonPile1.empty()) || 
                    (hand2.empty() && board2.empty() && wonPile2.empty()))) {
@@ -136,15 +138,14 @@ class Game {
         }
 
         //Used tp convert hand into vector and shuffle for adding winPile to hand
-        void shuffleHand() {
-            while (!(hand1.empty() || hand2.empty()))
-            {
+        Card shuffleHand(list<Card>&) {
+            vector<Card> temp;
+            while (!&.empty()) {
 
             }
         }
 
     public:
-
         list<Card> hand1;
         list<Card> hand2;
 
@@ -181,6 +182,9 @@ class Game {
                     }
                 }
                 else {
+                    //Display stats
+                    cout << "Round " << roundCounter << ":\n";
+
                     //Each player plays top card
                     cout << "Player 1 plays: " << hand1.front().printCard() << '\n';
                     cout << "Player 2 plays: " << hand2.front().printCard() << '\n';
@@ -195,11 +199,13 @@ class Game {
                         //Add card to player 1 win pile
                         wonPile1.push_back(topCard1);
                         wonPile1.push_back(topCard2);
+                        roundCounter++;
                     } 
                     else if (topCard1 < topCard2) {
                         //Add cards to player 2 win pile
                         wonPile2.push_back(topCard1);
                         wonPile2.push_back(topCard2);
+                        roundCounter++;
                     } 
                     else if (topCard1 == topCard2) {
                         War();      //Initiate War
@@ -245,7 +251,8 @@ class Game {
                 // Check if player has at least 4 cards if not check wonPile for empty
                 // if empty they lose, if has cards move to hand and continue placing cards
                 if (wonPile1.empty()) {
-                    //Game over Logic
+                    cout << "Player 2 wins!";
+                    exit(0);
                 }
                 else if (!wonPile1.empty()) {
                     //Move all wonPile1 cards to hand
@@ -260,7 +267,8 @@ class Game {
                 }
 
                 if (wonPile2.empty()) {
-                    //Game over Logic
+                    cout << "Player 1 wins!";
+                    exit(0);
                 }
                 else if (!wonPile2.empty()) {
                     //Move all wonPile2 cards to hand
@@ -304,6 +312,7 @@ class Game {
                     wonPile1.push_back(board1.front());
                     board1.pop_front();
                 }
+                roundCounter++;
             }
             else if (warCard2 > warCard1) {
                 while (!board2.empty()) {
@@ -314,6 +323,7 @@ class Game {
                     wonPile2.push_back(board2.front());
                     board2.pop_front();
                 }
+                roundCounter++;
             }
             else {
                 War();  //Recurse for tie
