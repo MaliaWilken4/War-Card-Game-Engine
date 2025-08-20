@@ -121,6 +121,7 @@ class Deck {
 class Game {
     private:
         int roundCounter = 1;
+        bool roundComplete = false;
 
         bool isRunning() {
             if (!((hand1.empty() && board1.empty() && wonPile1.empty()) || 
@@ -137,9 +138,12 @@ class Game {
             return false;
         }
 
-        // Used tp convert hand into vector and shuffle for adding winPile to hand
+        // Used to convert hand into vector and shuffle for adding winPile to hand
         void shuffleHand(list<Card>& hand) {    //any list passed in would be a reference of hand
             vector<Card> temp;
+            // Optional, for efficiency
+            // vector<Card> temp;
+            // temp.reserve(hand.size());
 
             // Move all cards into vector
             while (!hand.empty()) {
@@ -153,14 +157,16 @@ class Game {
             std::shuffle(temp.begin(), temp.end(), generator);
 
             // Move shuffled cards back into list
-            // while (!temp.empty()) {
-            //     hand.push_back(temp.front());
-            //     hand.pop_front();
-            // }
-
             for (const Card& card : temp) {
-
+                hand.push_back(card);
             }
+
+            // Previous for loop is equivalent to 
+            // for (size_t i = 0; i < temp.size(); ++i) {
+            //     const Card& card = temp[i];
+            //     // do something with card
+            // }
+            
         }
 
     public:
@@ -179,7 +185,6 @@ class Game {
         {
             dealHands();
             int nextRound;
-            int currentRound = 1;
             
             // Game Loop Starts Here
             while (isRunning()) {
@@ -205,9 +210,13 @@ class Game {
                     //Display stats
                     cout << "\nRound " << roundCounter << ":\n";
 
-                    //Display number of cards of each player
-                    cout << "Player 1 has " << hand1.size() << "cards in their hand.\n";
-                    cout << "Player 2 has " << hand2.size() << "cards in their hand.\n";
+                    //Display number of cards in players' hands
+                    cout << "Player 1 has " << hand1.size() << " cards in their hand.\n";
+                    cout << "Player 2 has " << hand2.size() << " cards in their hand.\n";
+
+                    //Display number of cards in players' winPile
+                    cout << "Player 1 has " << wonPile1.size() << " cards in their win pile.\n";
+                    cout << "Player 2 has " << wonPile2.size() << " cards in their win pile.\n";
 
                     //Each player plays top card
                     cout << "Player 1 plays: " << hand1.front().printCard() << '\n';
@@ -225,6 +234,7 @@ class Game {
                         wonPile1.push_back(topCard1);
                         wonPile1.push_back(topCard2);
                         roundCounter++;
+                        roundComplete = true;
                     } 
                     else if (topCard1 < topCard2) {
                         //Add cards to player 2 win pile
@@ -232,35 +242,35 @@ class Game {
                         wonPile2.push_back(topCard1);
                         wonPile2.push_back(topCard2);
                         roundCounter++;
+                        roundComplete = true;
                     } 
                     else if (topCard1 == topCard2) {
                         War();      //Initiate War
+                    }
+
+                    if (roundComplete) {
+                        //Provide pause between rounds
+                        cout << "\nPress ENTER to proceed to the next round: ";
+                        //cin.ignore(1000, '\n');
+                        cin.get();
+                        roundComplete = false;
                     }
                 }
 
                 //Declare Winner Logic
                 if (hand1.empty() && wonPile1.empty()) {
                     cout << "Player 2 wins the game!\n";
+                    cout << "\nThank you for playing War!\n";
                     exit(0);
                     break;
                 }
                 
                 if (hand2.empty() && wonPile2.empty()) {
                     cout << "Player 1 wins the game!\n";
+                    cout << "\nThank you for playing War!\n";
                     exit(0);
                     break;
                 }
-
-                if (currentRound == roundCounter--)
-                    printf("If statment reached");
-                    //Provide pause between rounds
-                    cout << "\nEnter 1 to proceed to the next round: ";
-                    cin >> nextRound;
-                    if (nextRound == 1) {
-                        currentRound++;
-                        roundCounter++;
-                    }
-                    //continue;
             }
         }
 
@@ -283,7 +293,7 @@ class Game {
 
         //War Logic
         void War() {
-            printf("Tie! Time for War!!\n");
+            printf("\nTie! Time for War!!\n");
 
             // Check if players have enough cards
             if (hand1.size() < 4 || hand2.size() < 4) {
@@ -323,20 +333,25 @@ class Game {
             }
 
             //Place 3 Cards face down in board
+            cout << "Place 3 cards face down.\n";
             for (int i = 0; i < 3; i++) {
                 board1.push_back(hand1.front());
                 hand1.pop_front();
+                cout << "Player 1 has placed card " << i + 1 << '\n';
 
                 board2.push_back(hand2.front());
                 hand2.pop_front();
+                cout << "Player 2 has placed card " << i + 1 << '\n';
             }
 
             //Last card (fourth) is placed face up
             Card warCard1 = hand1.front();
             hand1.pop_front();
+            cout << "Player 1 places " << warCard1.printCard() << " face up.\n";
 
             Card warCard2 = hand2.front();
             hand2.pop_front();
+            cout << "Player 2 places " << warCard2.printCard() << " face up.\n";
 
             board1.push_back(warCard1);
             board2.push_back(warCard2);
@@ -351,8 +366,9 @@ class Game {
                     wonPile1.push_back(board1.front());
                     board1.pop_front();
                 }
-                cout << "Player 1 wins the round!\n";                        
+                cout << "Player 1 wins the round!\n";               
                 roundCounter++;
+                roundComplete = true;
             }
             else if (warCard2 > warCard1) {
                 while (!board2.empty()) {
@@ -365,6 +381,7 @@ class Game {
                 }
                 cout << "Player 2 wins the round!\n";
                 roundCounter++;
+                roundComplete = true;
             }
             else {
                 War();  //Recurse for tie
@@ -404,7 +421,7 @@ class Menu {
         }
 
         void quitGame() {
-            cout << "Thank you for playing War!\n";
+            cout << "\nThank you for playing War!\n";
             exit(0);
         }
 };
