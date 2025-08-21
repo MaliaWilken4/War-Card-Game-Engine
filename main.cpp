@@ -99,6 +99,7 @@ class Deck {
             }
         }
 
+        // Deal card function
         Card dealCard() {
             if (!cards.empty()) {
                 Card top = cards.back();
@@ -110,6 +111,7 @@ class Deck {
             }
         }
 
+        // Shuffle deck function
         void shuffle()      // std::shuffle uses the Fisher-Yates shuffle algorithm
         {
             std::random_device rd;
@@ -178,6 +180,8 @@ class Game {
 
         list<Card> wonPile1;
         list<Card> wonPile2;
+
+        string winner;
 
         //To show the cards in the board for a UI or printout, iterate over list<Card>
 
@@ -259,15 +263,15 @@ class Game {
 
                 //Declare Winner Logic
                 if (hand1.empty() && wonPile1.empty()) {
-                    cout << "Player 2 wins the game!\n";
-                    cout << "\nThank you for playing War!\n";
+                    winner = "2";
+                    wonGame(winner);
                     exit(0);
                     break;
                 }
                 
                 if (hand2.empty() && wonPile2.empty()) {
-                    cout << "Player 1 wins the game!\n";
-                    cout << "\nThank you for playing War!\n";
+                    winner = "1";
+                    wonGame(winner);
                     exit(0);
                     break;
                 }
@@ -300,7 +304,8 @@ class Game {
                 // Check if player has at least 4 cards if not check wonPile for empty
                 // if empty they lose, if has cards move to hand and continue placing cards
                 if (wonPile1.empty()) {
-                    cout << "Player 2 wins!";
+                    winner = "2";
+                    wonGame(winner);
                     exit(0);
                 }
                 else if (!wonPile1.empty()) {
@@ -316,7 +321,8 @@ class Game {
                 }
 
                 if (wonPile2.empty()) {
-                    cout << "Player 1 wins!";
+                    winner = "1";
+                    wonGame(winner);
                     exit(0);
                 }
                 else if (!wonPile2.empty()) {
@@ -386,6 +392,13 @@ class Game {
             else {
                 War();  //Recurse for tie
             }
+        }
+
+        // Win Game Message Function
+        void wonGame(string winner) {
+            string winMessage = "\nPlayer " + winner + " wins the game!\n" 
+                                "\nThank you for playing War!\n";
+            cout << winMessage;
         }
 };
 
