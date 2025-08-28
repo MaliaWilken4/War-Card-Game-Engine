@@ -166,7 +166,7 @@ class Game {
             // Previous for loop is equivalent to 
             // for (size_t i = 0; i < temp.size(); ++i) {
             //     const Card& card = temp[i];
-            //     // do something with card
+            //     // move shuffled cards back into list
             // }
             
         }
@@ -430,7 +430,8 @@ class Menu {
         }
 
         void settings() {
-
+            cout << "\nSettings are currently not functional.\n";
+            exit(0);
         }
 
         void quitGame() {
